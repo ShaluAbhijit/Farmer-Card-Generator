@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Card Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
+    .form-container, .card-container {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #ffffff;
+    }
+    .form-container input, .form-container textarea, .form-container button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
+      font-size: 16px;
+    }
+    .card {
+      width: 86mm;
+      height: 55mm;
+      border: 1px solid #000;
+      border-radius: 5px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #e6ffe6; /* Same color for both sides */
+      position: relative;
+    }
+    .card-header {
+      text-align: center;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+    .card-header strong {
+      display: block;
+      font-size: 14px;
+      margin-top: 2px;
+    }
+    .card-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-grow: 1;
+    }
+    .details {
+      font-size: 12px;
+      text-align: left;
+      width: 60%;
+    }
+    .photo-container {
+      width: 35%;
+      text-align: center;
+    }
+    .photo-container img {
+      width: 60px;
+      height: 60px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>ID Card Form</h2>
+  <label for="enrollmentId">Farmer Enrollment ID</label>
+  <input type="text" id="enrollmentId" placeholder="Enter Farmer Enrollment ID">
+  <label for="name">Farmer Name</label>
+  <input type="text" id="name" placeholder="Enter farmer name">
+  <label for="identifier">Identifier Name</label>
+  <input type="text" id="identifier" placeholder="Enter identifier name">
+  <label for="dob">DOB</label>
+  <input type="date" id="dob">
+  <label for="gender">Gender</label>
+  <input type="text" id="gender" placeholder="Enter gender">
+  <label for="familyId">Family ID</label>
+  <input type="text" id="familyId" placeholder="Enter family ID">
+  <label for="memberId">Family Member ID</label>
+  <input type="text" id="memberId" placeholder="Enter family member ID">
+  <label for="mobile">Mobile</label>
+  <input type="text" id="mobile" placeholder="Enter mobile number">
+  <label for="residential">Residential Details</label>
+  <textarea id="residential" rows="3" placeholder="Enter residential details"></textarea>
+  <label for="state">State</label>
+  <input type="text" id="state" placeholder="Enter state">
+  <label for="district">District</label>
+  <input type="text" id="district" placeholder="Enter district">
+  <label for="subDistrict">Sub-District</label>
+  <input type="text" id="subDistrict" placeholder="Enter sub-district">
+  <label for="village">Village</label>
+  <input type="text" id="village" placeholder="Enter village">
+  <label for="survey">Survey Details (e.g., 711/2:0.045000)</label>
+  <textarea id="survey" rows="3" placeholder="Enter survey details, separated by commas"></textarea>
+  <label for="issueDate">Issue Date</label>
+  <input type="date" id="issueDate">
+  <label for="photo">Photo</label>
+  <input type="file" id="photo" accept="image/*">
+  <button onclick="generateCard()">Submit</button>
+</div>
+
+<div class="card-container" id="cardContainer" style="display:none;">
+  <h2>Generated ID Card</h2>
+  
+  <!-- Front Side -->
+  <div class="card">
+    <div class="card-header">
+      Farmer Enrollment ID
+      <strong id="enrollmentIdValue"></strong>
+    </div>
+    <div class="card-content">
+      <div class="details" id="frontCardDetails"></div>
+      <div class="photo-container">
+        <img id="photoPreview" src="" alt="Photo">
+      </div>
+    </div>
+  </div>
+
+  <!-- Back Side -->
+  <div class="card">
+    <div class="details" id="backCardDetails"></div>
+  </div>
+
+  <button onclick="window.print()">Print Card</button>
+</div>
+
+<script>
+  function generateCard() {
+    // Get input values
+    const enrollmentId = document.getElementById('enrollmentId').value;
+    const name = document.getElementById('name').value;
+    const identifier = document.getElementById('identifier').value;
+    const dob = document.getElementById('dob').value;
+    const gender = document.getElementById('gender').value;
+    const familyId = document.getElementById('familyId').value;
+    const memberId = document.getElementById('memberId').value;
+    const mobile = document.getElementById('mobile').value;
+    const residential = document.getElementById('residential').value;
+    const issueDate = document.getElementById('issueDate').value;
+
+    const state = document.getElementById('state').value;
+    const district = document.getElementById('district').value;
+    const subDistrict = document.getElementById('subDistrict').value;
+    const village = document.getElementById('village').value;
+    const survey = document.getElementById('survey').value.split(',');
+
+    // Photo preview
+    const photo = document.getElementById('photo').files[0];
+    const photoPreview = document.getElementById('photoPreview');
+    if (photo) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        photoPreview.src = e.target.result;
+      };
+      reader.readAsDataURL(photo);
+    }
+
+    // Set Farmer Enrollment ID
+    document.getElementById('enrollmentIdValue').textContent = enrollmentId;
+
+    // Generate front card details
+    let frontCardHTML = `
+      <strong>Farmer Name:</strong> ${name}<br>
+      <strong>Identifier Name:</strong> ${identifier}<br>
+      <strong>DOB:</strong> ${dob}<br>
+      <strong>Gender:</strong> ${gender}<br>
+      <strong>Family ID:</strong> ${familyId}<br>
+      <strong>Family Member ID:</strong> ${memberId}<br>
+      <strong>Mobile:</strong> ${mobile}<br>
+      <strong>Residential:</strong> ${residential}<br>
+      <strong>Issue Date:</strong> ${issueDate}<br>
+    `;
+    document.getElementById('frontCardDetails').innerHTML = frontCardHTML;
+
+    // Generate back card details
+    let backCardHTML = `
+      <strong>State:</strong> ${state}<br>
+      <strong>District:</strong> ${district}<br>
+      <strong>Sub-District:</strong> ${subDistrict}<br>
+      <strong>Village:</strong> ${village}<br>
+      <strong>Survey Details:</strong><br>
+    `;
+    survey.forEach((item, index) => {
+      backCardHTML += `${index + 1}. ${item}<br>`;
+    });
+    document.getElementById('backCardDetails').innerHTML = backCardHTML;
+
+    // Show card
+    document.querySelector('.form-container').style.display = 'none';
+    document.getElementById('cardContainer').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
